@@ -26,7 +26,8 @@ public class Utils {
             validate(((Character) obj).abilityModifier);
             validate(((Character) obj).armor);
             validate(((Character) obj).armorStats);
-        }
+            validate(((Character) obj).effects);
+            validate(((Character) obj).body);}
 
         if (obj instanceof AttackRequest) {
             validate(((AttackRequest) obj).belligerents);

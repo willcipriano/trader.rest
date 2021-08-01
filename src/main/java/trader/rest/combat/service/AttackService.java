@@ -1,13 +1,13 @@
 package trader.rest.combat.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import trader.rest.combat.entity.*;
 import trader.rest.combat.entity.Character;
 import trader.rest.combat.exception.AbiltyBonusException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,33 +16,49 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AttackService {
 
-    private static CombatResult calculateAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender)  {
+    private static CombatResult calculateAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender) throws AbiltyBonusException  {
+        CombatResult result = CombatResult.builder()
+                .belligerent(belligerent)
+                .defender(defender)
+                .build();
+
 
         List<Double> atkDmgMultiList = attackRequest.ability.getAbilityModifierDmgAtk().entrySet().stream().map(e-> {
             try {
-                return belligerent.getAbilityBonusModifier(e.getKey()) * e.getValue();
+                if (belligerent.getAbilityBonusModifier(e.getKey()) < 0) {
+                    return belligerent.getAbilityBonusModifier(e.getKey()) / e.getValue();
+                } else {
+                return belligerent.getAbilityBonusModifier(e.getKey()) * e.getValue();}
             } catch (AbiltyBonusException abiltyBonusException) {
                 log.warn("Failed to calculate ability modifier for {}.", belligerent.getName(), abiltyBonusException);
                 return (double) 0;
             }
         }).collect(Collectors.toList());
         Double atkDmg = atkDmgMultiList.stream().reduce((double) 0, Double::sum);
+        atkDmg += attackRequest.getAbility().getBaseDmg();
 
         List<Double> atkHitMultiList = attackRequest.ability.getAbilityModifierHitAtk().entrySet().stream().map(e-> {
             try {
-                return belligerent.getAbilityBonusModifier(e.getKey()) * e.getValue();
+                if (belligerent.getAbilityBonusModifier(e.getKey()) < 0) {
+                    return belligerent.getAbilityBonusModifier(e.getKey()) / e.getValue();
+                } else {
+                    return belligerent.getAbilityBonusModifier(e.getKey()) * e.getValue();}
             } catch (AbiltyBonusException abiltyBonusException) {
                 log.warn("Failed to calculate ability modifier for {}.", belligerent.getName(), abiltyBonusException);
                 return (double) 0;
             }
         }).collect(Collectors.toList());
         Double atkHit = atkHitMultiList.stream().reduce((double) 0, Double::sum);
+        atkHit += attackRequest.ability.getBaseHit();
 
         List<Double> defDmgMultiList = attackRequest.ability.getAbilityModifierDmgDef().entrySet().stream().map(e-> {
             try {
-                return defender.getAbilityBonusModifier(e.getKey()) * e.getValue();
+                if (defender.getAbilityBonusModifier(e.getKey()) < 0) {
+                    return defender.getAbilityBonusModifier(e.getKey()) / e.getValue();
+                } else {
+                    return defender.getAbilityBonusModifier(e.getKey()) * e.getValue();}
             } catch (AbiltyBonusException abiltyBonusException) {
-                log.warn("Failed to calculate ability modifier for {}.", belligerent.getName(), abiltyBonusException);
+                log.warn("Failed to calculate ability modifier for {}.", defender.getName(), abiltyBonusException);
                 return (double) 0;
             }
         }).collect(Collectors.toList());
@@ -50,22 +66,26 @@ public class AttackService {
 
         List<Double> defHitMultiList = attackRequest.ability.getAbilityModifierHitDef().entrySet().stream().map(e-> {
             try {
-                return defender.getAbilityBonusModifier(e.getKey()) * e.getValue();
+                if (defender.getAbilityBonusModifier(e.getKey()) < 0) {
+                    return defender.getAbilityBonusModifier(e.getKey()) / e.getValue();
+                } else {
+                    return defender.getAbilityBonusModifier(e.getKey()) * e.getValue();}
             } catch (AbiltyBonusException abiltyBonusException) {
-                log.warn("Failed to calculate ability modifier for {}.", belligerent.getName(), abiltyBonusException);
+                log.warn("Failed to calculate ability modifier for {}.", defender.getName(), abiltyBonusException);
                 return (double) 0;
             }
         }).collect(Collectors.toList());
         Double defHit = defHitMultiList.stream().reduce((double) 0, Double::sum);
+        defHit += defender.getArmorStats().getArmorClass();
+
+        log.debug("Combat between {} and {} starts: AtkDmg {}, AtkHit {}, DefDmg {}, DefHit {}.", belligerent.getName(), defender.getName(), atkDmg, atkHit, defDmg, defHit);
 
         if (atkHit > defHit) {
             if (atkDmg > defDmg) {
-                return CombatResult.builder()
-                        .belligerent(belligerent)
-                        .defender(defender)
-                        .hpChange((int) (atkDmg - defDmg))
-                        .combatFailureReasons(Collections.singletonList(CombatFailureEnum.SUCCESS))
-                        .build();
+                int change = (int) (atkDmg - defDmg);
+                log.debug("Combat between {} and {} calculated, {} damage results.", belligerent.getName(), defender.getName(), change);
+                result.setNewStatChange(HostilityModeEnum.DEFENDER, StatTypeEnum.HP, change);
+                return result.signOffAndSend();
             }
         }
 
@@ -87,16 +107,16 @@ public class AttackService {
             failureReasons.add(CombatFailureEnum.EQUAL_DMG);
         }
 
-        return CombatResult.builder()
-                .belligerent(belligerent)
-                .defender(defender)
-                .combatFailureReasons(failureReasons)
-                .hpChange(0)
-                .build();
+        log.debug("Combat between {} and {} calculated, no damage results.", belligerent.getName(), defender.getName());
+
+        result.setCombatFailureReasons(failureReasons);
+
+        return result;
     }
 
 
-    public static AttackResult render(AttackRequest attackRequest) {
+    public static AttackResult render(AttackRequest attackRequest) throws AbiltyBonusException {
+        log.debug("Starting attack simulation. Belligerents: '{}' Defenders: '{}'", attackRequest.belligerents.stream().map(Character::getName).collect(Collectors.toList()), attackRequest.defenders.stream().map(Character::getName).collect(Collectors.toList()));
         List<CombatResult> combatResultList = new ArrayList<>();
         int curDefender = 0;
         int defenderSize = attackRequest.defenders.size();
@@ -117,7 +137,26 @@ public class AttackService {
                     continue;
                 }
 
-                combatResultList.add(calculateAttackInstance(attackRequest, belligerent, attackRequest.defenders.get(curDefender)));
+                if (!belligerent.isValidAttacker()) {
+                    log.debug("{} is not a valid attacker.", belligerent.getName());
+                    combatResultList.add(CombatResult.builder()
+                            .quickReport(belligerent, attackRequest.defenders.get(curDefender), CombatFailureEnum.INELIGIBLE_ATTACKER));
+                    break;
+                }
+
+                Character defender = attackRequest.defenders.get(curDefender);
+
+                if (defender.isValidDefender()) {
+                    combatResultList.add(calculateAttackInstance(attackRequest, belligerent, defender));
+                } else {
+                    log.debug("{} is not a valid defender.", defender.getName());
+                    attackRequest.defenders.remove(defender);
+                    defenderSize = attackRequest.defenders.size();
+                    combatResultList.add(CombatResult.builder()
+                            .quickReport(belligerent, defender, CombatFailureEnum.INELIGIBLE_DEFENDER));
+                    continue;
+                }
+
                 hitsTotal += 1;
             }
         }

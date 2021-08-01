@@ -9,6 +9,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -54,11 +56,18 @@ public class Character {
     @NotNull
     AbilityModifier abilityModifier;
 
+    @NotNull
+    CharacterEffects effects;
+
+    @NotNull
+    BodyStatistics body;
+
     public static class CharacterBuilder {
         /*
          *  this allows for validation in the builder itself, preventing
          *  out of spec characters from being built.
         */
+
         @NotNull
         @Size(max = 75, min = 1)
         String name;
@@ -91,6 +100,9 @@ public class Character {
         @Max(999)
         int level;
 
+        @NotNull
+        AbilityModifier abilityModifier;
+
     public CharacterBuilder calculateDerivedStats() throws CharacterInitException {
         this.abilityModifier = AbilityModifier.builder()
                 .define(this.strength, this.intelligence, this.wisdom, this.dexterity, this.constitution, this.charisma)
@@ -99,6 +111,10 @@ public class Character {
         this.armorStats = ArmorStats.builder()
                 .define(this.armor.getArmorItemList(), this.abilityModifier.dexterity)
                 .build();
+
+        this.body = BodyStatistics.builder()
+                .calculateStartingHitPointsFromCharacterBuilder(this)
+                .build();
         return this;
     }
 
@@ -106,6 +122,11 @@ public class Character {
         Utils.validate(this);
         return this;
     }
+
+    public Character calculateAndBuild() throws CharacterInitException, ValidationException {
+        return this.calculateDerivedStats().validate().build();
+    }
+
     }
 
     public Double getAbilityBonusModifier(StatTypeEnum type) throws AbiltyBonusException {
@@ -133,5 +154,30 @@ public class Character {
                 throw new AbiltyBonusException();
         }
 
+    }
+    /*
+     *  Damage and HP related functions, as well as alive or
+     *  unconscious status.
+     */
+    public void applyDamage(int hp) {
+        this.body.applyDamage(hp);
+    }
+
+    public void applyHealing(int hp) {
+        this.body.applyHealing(hp);
+    }
+
+    public Boolean isValidDefender() { return this.body.isValidDefender(); }
+
+    public Boolean isValidAttacker() { return this.body.isValidAttacker(); }
+
+
+    /*
+     *  AttackEffect stuff.
+     */
+    public Map<AttackEffect, EffectStatus> getAttackEffects() { return this.effects.getAttackEffects(); }
+
+    public void expireAttackEffect(AttackEffect effect) {
+        this.effects.getAttackEffects().remove(effect);
     }
 }

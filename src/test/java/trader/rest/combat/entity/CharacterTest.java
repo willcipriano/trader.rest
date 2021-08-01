@@ -95,8 +95,8 @@ class CharacterTest {
                 .charisma(statLevel)
                 .name(name)
                 .armor(createTestArmor(armorType))
-                .validate()
                 .calculateDerivedStats()
+                .validate()
                 .build();
     }
 

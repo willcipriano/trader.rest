@@ -5,7 +5,10 @@ public enum CombatFailureEnum {
     DMG("Low Damage", "low_dmg", 1),
     EQUAL_HIT("Equal Hit", "equal_hit", 2),
     EQUAL_DMG("Equal Damage", "equal_dmg", 3),
-    SUCCESS("Success", "success", 4);
+    SUCCESS("Success", "success", 4),
+    INELIGIBLE_DEFENDER("Ineligible Defender", "ineligible_defender", 5),
+    INELIGIBLE_ATTACKER("Ineligible Attacker", "ineligible_attacker", 6);
+
 
     public final String name;
     public final String shortName;

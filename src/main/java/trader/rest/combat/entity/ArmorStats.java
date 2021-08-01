@@ -16,7 +16,7 @@ public class ArmorStats {
     int armorBonus;
 
     public static class ArmorStatsBuilder {
-        private int armorTotal;
+        private int armorBonus;
         private int armorClass;
 
         private int calculateArmorBonus(List<ArmorItem> armorItems) {
@@ -24,8 +24,8 @@ public class ArmorStats {
         }
 
         public ArmorStatsBuilder define(List<ArmorItem> armorItemList, int dexBonus) {
-            this.armorTotal = calculateArmorBonus(armorItemList);
-            this.armorClass = this.armorTotal + dexBonus;
+            this.armorBonus = calculateArmorBonus(armorItemList);
+            this.armorClass = this.armorBonus + dexBonus;
             return this;
         }
 
