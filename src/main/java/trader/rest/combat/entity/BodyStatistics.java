@@ -121,6 +121,7 @@ public class BodyStatistics {
 
         public BodyStatisticsBuilder hitPoints(int maxHP) {
             this.maxHP = maxHP;
+            this.curMaxHp = maxHP;
             this.curHP = maxHP;
 
             if (maxHP > 0) {

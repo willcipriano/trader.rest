@@ -10,7 +10,9 @@ public enum StatTypeEnum {
     DEX("Dexterity", "dex", 3),
     CON("Constitution", "con", 4),
     CHA("Charisma", "cha", 5),
-    HP("Hit Points", "hp", 6);
+    HP("Hit Points", "hp", 6),
+    DMG("Damage", "dmg", 7),
+    HIT("Hit", "hit", 8);
 
     public final String name;
     public final String shortName;
@@ -22,11 +24,11 @@ public enum StatTypeEnum {
         this.num = num;
     }
 
-    public List<String> getAllNames() {
-        return Arrays.asList(STR.name, INT.name, WIZ.name, DEX.name, CON.name, CHA.name, HP.name);
+    public List<String> getCoreNames() {
+        return Arrays.asList(STR.name, INT.name, WIZ.name, DEX.name, CON.name, CHA.name);
     }
 
-    public List<String> getAllShortNames() {
-        return Arrays.asList(STR.shortName, INT.shortName, WIZ.shortName, DEX.shortName, CON.shortName, CHA.shortName, HP.shortName);
+    public List<String> getCoreShortNames() {
+        return Arrays.asList(STR.shortName, INT.shortName, WIZ.shortName, DEX.shortName, CON.shortName, CHA.shortName);
     }
 }

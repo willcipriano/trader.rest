@@ -1,6 +1,8 @@
 package trader.rest.combat.entity;
 
+import jdk.jshell.spi.ExecutionControl;
 import lombok.*;
+import org.springframework.web.client.HttpServerErrorException;
 import trader.rest.combat.exception.AbiltyBonusException;
 import trader.rest.combat.exception.CharacterInitException;
 import trader.rest.combat.exception.ValidationException;
@@ -9,6 +11,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -103,6 +106,9 @@ public class Character {
         @NotNull
         AbilityModifier abilityModifier;
 
+        @NotNull
+        CharacterEffects effects;
+
     public CharacterBuilder calculateDerivedStats() throws CharacterInitException {
         this.abilityModifier = AbilityModifier.builder()
                 .define(this.strength, this.intelligence, this.wisdom, this.dexterity, this.constitution, this.charisma)
@@ -115,6 +121,9 @@ public class Character {
         this.body = BodyStatistics.builder()
                 .calculateStartingHitPointsFromCharacterBuilder(this)
                 .build();
+
+        if (this.effects == null) {
+        this.effects = CharacterEffects.builder().buildEmpty(); }
         return this;
     }
 
@@ -122,11 +131,6 @@ public class Character {
         Utils.validate(this);
         return this;
     }
-
-    public Character calculateAndBuild() throws CharacterInitException, ValidationException {
-        return this.calculateDerivedStats().validate().build();
-    }
-
     }
 
     public Double getAbilityBonusModifier(StatTypeEnum type) throws AbiltyBonusException {
@@ -171,13 +175,65 @@ public class Character {
 
     public Boolean isValidAttacker() { return this.body.isValidAttacker(); }
 
+    public Map<Effect, EffectStatus> getEffects() {
+        return this.effects.getEffects(); }
 
-    /*
-     *  AttackEffect stuff.
-     */
-    public Map<AttackEffect, EffectStatus> getAttackEffects() { return this.effects.getAttackEffects(); }
+    public void expireEffect(Effect effect) {
+        this.effects.getEffects().remove(effect);
+    }
 
-    public void expireAttackEffect(AttackEffect effect) {
-        this.effects.getAttackEffects().remove(effect);
+    public void incrementEffect(Effect effect) {
+        this.effects.getEffects().get(effect).increment();
+    }
+
+    public void rebuildAbilityModifiers() {
+        try {
+        this.abilityModifier = AbilityModifier.builder()
+                .define(this.strength, this.intelligence, this.wisdom, this.dexterity, this.constitution, this.charisma)
+                .build(); }
+        catch (CharacterInitException ignore) {};
+
+    }
+
+    public void applyStatusChange(StatTypeEnum statTypeEnum, int change) {
+        switch (statTypeEnum) {
+            case STR:
+                this.strength += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case INT:
+                this.intelligence += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case WIZ:
+                this.wisdom += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case CON:
+                this.constitution += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case DEX:
+                this.dexterity += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case CHA:
+                this.charisma += change;
+                rebuildAbilityModifiers();
+                return;
+
+            case HP:
+                if (change > 0) {
+                    this.applyHealing(change);
+                    return;
+                }
+                this.applyDamage(change);
+        }
+
     }
 }

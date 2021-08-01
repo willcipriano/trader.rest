@@ -15,13 +15,20 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AttackService {
+    private static EffectService effectService;
 
-    private static CombatResult calculateAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender) throws AbiltyBonusException  {
+    @Autowired
+    public AttackService(EffectService effectService) {
+        AttackService.effectService = effectService;
+    }
+
+    private static CombatResult calculateAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender) {
         CombatResult result = CombatResult.builder()
                 .belligerent(belligerent)
                 .defender(defender)
                 .build();
 
+        List<EffectResult> effectResults = effectService.calculateAndApplyOnAttackEffects(belligerent, defender);
 
         List<Double> atkDmgMultiList = attackRequest.ability.getAbilityModifierDmgAtk().entrySet().stream().map(e-> {
             try {
@@ -78,6 +85,14 @@ public class AttackService {
         Double defHit = defHitMultiList.stream().reduce((double) 0, Double::sum);
         defHit += defender.getArmorStats().getArmorClass();
 
+        List<Double> postEffectCalculatedValues = effectService.calculatePostEffectAttackValues(atkDmg, atkHit, defDmg, defHit, effectResults);
+
+        atkDmg = postEffectCalculatedValues.get(0);
+        atkHit = postEffectCalculatedValues.get(1);
+        defDmg = postEffectCalculatedValues.get(2);
+        defHit = postEffectCalculatedValues.get(3);
+        result.setEffectResults(effectResults);
+
         log.debug("Combat between {} and {} starts: AtkDmg {}, AtkHit {}, DefDmg {}, DefHit {}.", belligerent.getName(), defender.getName(), atkDmg, atkHit, defDmg, defHit);
 
         if (atkHit > defHit) {
@@ -93,18 +108,22 @@ public class AttackService {
 
         if (atkHit < defHit) {
             failureReasons.add(CombatFailureEnum.HIT);
+            log.debug("The defenders speed and armor was greater than the attackers aim.");
         }
 
         if (atkDmg < defDmg) {
             failureReasons.add(CombatFailureEnum.DMG);
+            log.debug("The defenders defence was greater than the attackers damage.");
         }
 
         if (atkHit.equals(defHit)) {
             failureReasons.add(CombatFailureEnum.EQUAL_HIT);
+            log.debug("So evenly matched in terms of hit that they are unable to hit each other.");
         }
 
         if (atkDmg.equals(defDmg)) {
             failureReasons.add(CombatFailureEnum.EQUAL_DMG);
+            log.debug("So evenly matched in terms of damage and damage reduction that they are unable to damage each other.");
         }
 
         log.debug("Combat between {} and {} calculated, no damage results.", belligerent.getName(), defender.getName());

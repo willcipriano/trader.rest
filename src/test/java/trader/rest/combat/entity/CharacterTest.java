@@ -96,7 +96,6 @@ class CharacterTest {
                 .name(name)
                 .armor(createTestArmor(armorType))
                 .calculateDerivedStats()
-                .validate()
                 .build();
     }
 

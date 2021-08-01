@@ -1,6 +1,13 @@
 package trader.rest.combat.service;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import trader.rest.combat.entity.*;
 import trader.rest.combat.entity.Character;
 import trader.rest.combat.exception.AbiltyBonusException;
@@ -13,7 +20,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class AttackServiceTest {
+
+    @Autowired
+    AttackService attackService;
 
     private static CharacterEffects noFx = CharacterEffects.builder().build();
 
@@ -98,30 +111,39 @@ public class AttackServiceTest {
         assertEquals((double) 10, result.getCombatResults().get(0).getDefHPChange());
         assertEquals((double) 10, result.getCombatResults().get(1).getDefHPChange());
     }
-//
-//    @Test
-//    public void testOnAttackEffects() throws CharacterInitException, ValidationException{
-//        AttackEffect attackEffect = AttackEffect.builder()
-//                .effectTurns(5)
-//                .name("Poison")
-//                .build();
-//
-//        Character attacker = createTestCharacter(1, 1, "attacker", effects);
-//        Character defender = createTestCharacter(1, 1, "defender", noFx);
-//        AttackAbility ability = createTestAbility(1,1,1,1,10,5,2);
-//
-//        AttackRequest attackRequest = AttackRequest.builder()
-//                .belligerents(Collections.singletonList(attacker))
-//                .defenders(Arrays.asList(defender))
-//                .ability(ability)
-//                .build();
-//
-//        AttackResult result = AttackService.render(attackRequest);
-//
-//        assertEquals(2, result.getCombatResults().size());
-//        assertEquals((double) 10, result.getCombatResults().get(0).getHpChange());
-//        assertEquals((double) 10, result.getCombatResults().get(1).getHpChange());
-//    }
+
+    @Test
+    public void testOnAttackEffects() throws CharacterInitException, ValidationException, AbiltyBonusException{
+        Effect attackEffect = Effect.builder()
+                .effectTurns(5)
+                .name("Poison Coated")
+                .selfStatModifier(Map.of(StatTypeEnum.HP, 1))
+                .targetStatModifier(Map.of(StatTypeEnum.HP, 1))
+                .build();
+
+        EffectStatus attackEffectStatus = EffectStatus.builder()
+                .turnsRemaining(5)
+                .build();
+
+        CharacterEffects effects = CharacterEffects.builder()
+                .effects(Map.of(attackEffect, attackEffectStatus))
+                .build();
+
+        Character attacker = createTestCharacter(1, 1, "attacker", effects);
+        Character defender = createTestCharacter(1, 1, "defender", noFx);
+        AttackAbility ability = createTestAbility(1,1,1,1,10,5,2);
+
+        AttackRequest attackRequest = AttackRequest.builder()
+                .belligerents(Collections.singletonList(attacker))
+                .defenders(Arrays.asList(defender))
+                .ability(ability)
+                .build();
+
+        AttackResult result = AttackService.render(attackRequest);
+
+        assertEquals(2, result.getCombatResults().size());
+        assertEquals((double) 10, result.getCombatResults().get(0).getAtkHPChange());
+    }
 
 
 }

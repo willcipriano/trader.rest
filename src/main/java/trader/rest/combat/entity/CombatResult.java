@@ -25,7 +25,7 @@ public class CombatResult {
     private List<CombatFailureEnum> combatFailureReasons;
 
     @NotNull
-    private List<CombatEffectResult> combatEffectResults;
+    private List<EffectResult> effectResults;
 
     private boolean applied = false;
 
@@ -110,8 +110,8 @@ public class CombatResult {
         this.combatFailureReasons = failures;
     }
 
-    public void setCombatEffectResults(List<CombatEffectResult> effects) {
-        this.combatEffectResults = effects;
+    public void setEffectResults(List<EffectResult> effects) {
+        this.effectResults = effects;
     }
 
     public static class CombatResultBuilder {
@@ -123,6 +123,9 @@ public class CombatResult {
 
         @NotNull
         private List<CombatFailureEnum> combatFailureReasons;
+
+        @NotNull
+        private List<EffectResult> effectResults;
 
         public CombatResult quickReport(Character belligerent, Character defender, CombatFailureEnum failureEnum) {
             this.belligerent = belligerent;
