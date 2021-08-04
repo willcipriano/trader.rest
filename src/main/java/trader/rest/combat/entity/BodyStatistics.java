@@ -137,9 +137,12 @@ public class BodyStatistics {
             int hp = character.level + 1;
             double conBonus = character.abilityModifier.constitution;
 
-            if (conBonus >= 1) {
-                hp += conBonus;
+            if (conBonus > 1) {
+                hp += hp + (conBonus * 2) + character.constitution;
+            } else {
+                hp += hp + character.constitution;
             }
+
 
             return this.hitPoints(hp);
         }

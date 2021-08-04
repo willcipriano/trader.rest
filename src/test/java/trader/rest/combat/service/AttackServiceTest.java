@@ -5,8 +5,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import trader.rest.combat.entity.*;
 import trader.rest.combat.entity.Character;
@@ -28,7 +26,7 @@ public class AttackServiceTest {
     @Autowired
     AttackService attackService;
 
-    private static CharacterEffects noFx = CharacterEffects.builder().build();
+    private final static CharacterEffects noFx = CharacterEffects.builder().build();
 
     AttackAbility createTestAbility(double strAtkBonus, double dexAtkBonus, double conDefBonus, double dexDefBonus, int baseDmg, int baseHit, int maxTargets) {
         return AttackAbility.builder()

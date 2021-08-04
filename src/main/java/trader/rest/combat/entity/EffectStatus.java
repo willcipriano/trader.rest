@@ -19,4 +19,8 @@ public class EffectStatus {
     public void increment() {
         turnsRemaining -= 1;
     }
+
+    public boolean isActive() {
+        return 0 >= turnsRemaining;
+    }
 }

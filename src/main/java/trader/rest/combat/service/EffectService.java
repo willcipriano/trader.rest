@@ -38,7 +38,6 @@ public class EffectService {
         List<EffectResult> effectResults = new ArrayList<>();
 
         for (Effect effect: belligerent.getEffects().keySet()) {
-//            Some of these values defined here will have to be implemented by the attack service
             EffectResult newReport = EffectResult.builder()
                     .atkDmgModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.DMG, 0))
                     .atkHitModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.HIT, 0))
@@ -48,7 +47,6 @@ public class EffectService {
                     .effectName(effect.getName())
                     .build();
 
-//            core effects are applied to characters here and recorded
             applyCoreCharacterEffects(belligerent, defender, effect, newReport);
             effectResults.add(newReport);
             belligerent.incrementEffect(effect);

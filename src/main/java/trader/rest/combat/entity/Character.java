@@ -178,12 +178,16 @@ public class Character {
     public Map<Effect, EffectStatus> getEffects() {
         return this.effects.getEffects(); }
 
-    public void expireEffect(Effect effect) {
+    private void expireEffect(Effect effect) {
         this.effects.getEffects().remove(effect);
     }
 
     public void incrementEffect(Effect effect) {
         this.effects.getEffects().get(effect).increment();
+
+        if (!this.effects.getEffects().get(effect).isValid()) {
+            expireEffect(effect);
+        }
     }
 
     public void rebuildAbilityModifiers() {
