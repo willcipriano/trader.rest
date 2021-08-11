@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AttackServiceTest {
@@ -116,7 +115,7 @@ public class AttackServiceTest {
                 .effectTurns(5)
                 .name("Poison Coated")
                 .selfStatModifier(Map.of(StatTypeEnum.HP, 1))
-                .targetStatModifier(Map.of(StatTypeEnum.HP, 1))
+                .targetStatModifier(Collections.emptyMap())
                 .build();
 
         EffectStatus attackEffectStatus = EffectStatus.builder()
@@ -129,7 +128,7 @@ public class AttackServiceTest {
 
         Character attacker = createTestCharacter(1, 1, "attacker", effects);
         Character defender = createTestCharacter(1, 1, "defender", noFx);
-        AttackAbility ability = createTestAbility(1,1,1,1,10,5,2);
+        AttackAbility ability = createTestAbility(1,1,1,1,10,5,1);
 
         AttackRequest attackRequest = AttackRequest.builder()
                 .belligerents(Collections.singletonList(attacker))
@@ -139,8 +138,16 @@ public class AttackServiceTest {
 
         AttackResult result = AttackService.render(attackRequest);
 
-        assertEquals(2, result.getCombatResults().size());
-        assertEquals((double) 10, result.getCombatResults().get(0).getAtkHPChange());
+        EffectResult effectResult = result.getCombatResults().get(0).getEffectResults().get(0);
+
+        assertEquals("Poison Coated", effectResult.getEffectName());
+        assertEquals(1, effectResult.getSelfStatModifier().get(StatTypeEnum.HP));
+        assertEquals(5, effectResult.getEffectTurnsRemaining());
+
+        AttackResult result2 = AttackService.render(attackRequest);
+        EffectResult effectResult2 = result2.getCombatResults().get(0).getEffectResults().get(0);
+
+        assertEquals(4, effectResult2.getEffectTurnsRemaining());
     }
 
 

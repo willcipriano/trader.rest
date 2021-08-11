@@ -114,6 +114,10 @@ public class CombatResult {
         this.effectResults = effects;
     }
 
+    public List<EffectResult> getEffectResults() {
+        return this.effectResults;
+    }
+
     public static class CombatResultBuilder {
         @NotNull
         private Character belligerent;

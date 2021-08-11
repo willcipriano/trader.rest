@@ -22,7 +22,7 @@ public class AttackService {
         AttackService.effectService = effectService;
     }
 
-    private static CombatResult calculateAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender) {
+    private static CombatResult calculateMeleeAttackInstance(AttackRequest attackRequest, Character belligerent, Character defender) {
         CombatResult result = CombatResult.builder()
                 .belligerent(belligerent)
                 .defender(defender)
@@ -166,7 +166,7 @@ public class AttackService {
                 Character defender = attackRequest.defenders.get(curDefender);
 
                 if (defender.isValidDefender()) {
-                    combatResultList.add(calculateAttackInstance(attackRequest, belligerent, defender));
+                    combatResultList.add(calculateMeleeAttackInstance(attackRequest, belligerent, defender));
                 } else {
                     log.debug("{} is not a valid defender.", defender.getName());
                     attackRequest.defenders.remove(defender);

@@ -3,6 +3,7 @@ package trader.rest.combat.entity;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -19,11 +20,11 @@ public class ArmorStats {
         private int armorBonus;
         private int armorClass;
 
-        private int calculateArmorBonus(List<ArmorItem> armorItems) {
+        private int calculateArmorBonus(Collection<ArmorItem> armorItems) {
                 return armorItems.stream().mapToInt(a -> a.armorBonus).sum();
         }
 
-        public ArmorStatsBuilder define(List<ArmorItem> armorItemList, int dexBonus) {
+        public ArmorStatsBuilder define(Collection<ArmorItem> armorItemList, int dexBonus) {
             this.armorBonus = calculateArmorBonus(armorItemList);
             this.armorClass = this.armorBonus + dexBonus;
             return this;

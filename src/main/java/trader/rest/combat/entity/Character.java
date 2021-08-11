@@ -1,8 +1,6 @@
 package trader.rest.combat.entity;
 
-import jdk.jshell.spi.ExecutionControl;
 import lombok.*;
-import org.springframework.web.client.HttpServerErrorException;
 import trader.rest.combat.exception.AbiltyBonusException;
 import trader.rest.combat.exception.CharacterInitException;
 import trader.rest.combat.exception.ValidationException;
@@ -11,8 +9,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -54,13 +50,13 @@ public class Character {
     Armor armor;
 
     @NotNull
+    CharacterEffects effects;
+
+    @NotNull
     ArmorStats armorStats;
 
     @NotNull
     AbilityModifier abilityModifier;
-
-    @NotNull
-    CharacterEffects effects;
 
     @NotNull
     BodyStatistics body;
@@ -239,5 +235,9 @@ public class Character {
                 this.applyDamage(change);
         }
 
+    }
+
+    public int getCurrentHp() {
+        return this.getBody().getCurrentHp();
     }
 }

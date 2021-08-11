@@ -14,6 +14,8 @@ import trader.rest.combat.exception.ValidationException;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -76,6 +78,10 @@ public class EffectServiceTest {
         Character attacker = createTestCharacter(1, 1, "attacker", testEffect);
         Character defender = createTestCharacter(1, 1, "defender", noFx);
 
+        int currentAttackerHp = attacker.getCurrentHp();
+
         effectService.calculateAndApplyOnAttackEffects(attacker, defender);
+
+        assertEquals(currentAttackerHp - 1, attacker.getCurrentHp());
     }
 }

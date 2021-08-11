@@ -3,27 +3,47 @@ package trader.rest.combat.entity;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Armor {
+public class Armor implements Serializable {
     @NotNull
-    ArmorItem head;
+    Map<ArmorSlotEnum, ArmorItem> items;
 
-    @NotNull
-    ArmorItem body;
+    private void setSlot(ArmorItem item, ArmorSlotEnum slot) {
+        if (this.items == null) {
+            this.items = new HashMap<>();
+        }
 
-    @NotNull
-    ArmorItem hands;
+        if (item.slot.equals(slot)) {
+        this.items.put(slot, item);
+        }
+    }
 
-    @NotNull
-    ArmorItem feet;
+    public Collection<ArmorItem> getArmorItemList() {
+        return this.items.values();
+    }
 
-    public List<ArmorItem> getArmorItemList() {
-        return Arrays.asList(this.head, this.body, this.hands, this.feet);
+    public void setHead(ArmorItem item) {
+        setSlot(item, ArmorSlotEnum.HEAD);
+    }
+
+    public void setFeet(ArmorItem item) {
+        setSlot(item, ArmorSlotEnum.FEET);
+    }
+
+    public void setBody(ArmorItem item) {
+        setSlot(item, ArmorSlotEnum.BODY);
+    }
+
+    public void setHands(ArmorItem item) {
+        setSlot(item, ArmorSlotEnum.HANDS);
     }
 }

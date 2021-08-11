@@ -56,6 +56,7 @@ class CharacterTest {
 
         for (ArmorItem armorItem : armorItems) {
 
+
             switch (armorItem.slot) {
 
                 case BODY:
@@ -133,10 +134,10 @@ class CharacterTest {
                     assertEquals(statLevel, testChar.constitution);
                     assertEquals(statLevel, testChar.charisma);
                     assertEquals(name, testChar.name);
-                    assertEquals(armorType, testChar.armor.body.type);
-                    assertEquals(armorType, testChar.armor.head.type);
-                    assertEquals(armorType, testChar.armor.hands.type);
-                    assertEquals(armorType, testChar.armor.feet.type);
+                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.BODY).type);
+                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.HEAD).type);
+                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.HANDS).type);
+                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.FEET).type);
 
                     // Armor Class calculation testing
                     if (armorType == ArmorTypeEnum.LIGHT) {

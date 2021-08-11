@@ -33,7 +33,7 @@ public class BodyStatistics {
     }
 
     public void applyDamage(int damage) {
-        this.curHP -= damage;
+        this.curHP += damage;
         statusCheck();
     }
 
@@ -146,5 +146,10 @@ public class BodyStatistics {
 
             return this.hitPoints(hp);
         }
+
+    }
+
+    public int getCurrentHp() {
+        return this.curHP;
     }
 }
