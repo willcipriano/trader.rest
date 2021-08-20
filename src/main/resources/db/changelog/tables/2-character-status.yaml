@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id:  create-character-status
+      author:  Will Cipriano
+      changes:
+        -  createTable:
+             tableName: character_status
+             columns:
+              - column:
+                  name: character_sheet_uuid
+                  type: uuid
+              - column:
+                  name: current_strength
+                  type: smallint
+              - column:
+                  name: current_intelligence
+                  type: smallint
+              - column:
+                  name: current_wisdom
+                  type: smallint
+              - column:
+                  name: current_dexterity
+                  type: smallint
+              - column:
+                  name: current_constitution
+                  type: smallint
+              - column:
+                  name: current_charisma
+                  type: smallint
+              - column:
+                  name: current_hit_points
+                  type: smallint
+        - addPrimaryKey:
+            tableName: character_status
+            columnNames: character_sheet_uuid
+        - addForeignKeyConstraint:
+            constraintName: fk_character_status_character_sheet
+            referencedTableName: character_sheet
+            referencedColumnNames: uuid
+            baseTableName: character_status
+            baseColumnNames: character_sheet_uuid
+            onUpdate: 'NO ACTION'
+            onDelete: 'CASCADE'

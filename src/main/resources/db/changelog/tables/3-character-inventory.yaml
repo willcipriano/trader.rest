@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id:  create-character-inventory
+      author:  Will Cipriano
+      changes:
+        -  createTable:
+             tableName: character_inventory
+             columns:
+              - column:
+                  name: uuid
+                  type: uuid
+              - column:
+                  name: character_sheet_uuid
+                  type: uuid
+              - column:
+                  name: armor
+                  type: jsonb
+        - addPrimaryKey:
+            tableName: character_inventory
+            columnNames: character_sheet_uuid
+        - addForeignKeyConstraint:
+            constraintName: fk_character_inventory_character_sheet
+            referencedTableName: character_sheet
+            referencedColumnNames: uuid
+            baseTableName: character_inventory
+            baseColumnNames: character_sheet_uuid
+            onUpdate: 'NO ACTION'
+            onDelete: 'CASCADE'

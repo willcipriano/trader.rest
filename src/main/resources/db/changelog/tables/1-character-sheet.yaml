@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id:  create-character-sheet
+      author:  Will Cipriano
+      changes:
+        -  createTable:
+             tableName: character_sheet
+             columns:
+             - column:
+                  name: uuid
+                  type: uuid
+             - column:
+                  name: name
+                  type: varchar(75)
+             - column:
+                  name: max_strength
+                  type: smallint
+             - column:
+                  name: max_intelligence
+                  type: smallint
+             - column:
+                  name: max_wisdom
+                  type: smallint
+             - column:
+                  name: max_dexterity
+                  type: smallint
+             - column:
+                  name: max_constitution
+                  type: smallint
+             - column:
+                  name: max_charisma
+                  type: smallint
+             - column:
+                  name: level
+                  type: smallint
+        - addPrimaryKey:
+               tableName: character_sheet
+               columnNames: uuid

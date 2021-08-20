@@ -1,4 +1,6 @@
 package trader.rest.combat.repository;
 
-public class CharacterRepository {
+public class CharacterSheetRepository {
+
+
 }
