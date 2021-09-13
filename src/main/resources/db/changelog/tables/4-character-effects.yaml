@@ -16,7 +16,7 @@ databaseChangeLog:
             tableName: character_effects
             columnNames: character_sheet_uuid
         - addForeignKeyConstraint:
-            constraintName: fk_character_inventory_character_sheet
+            constraintName: fk_character_effects_character_sheet
             referencedTableName: character_sheet
             referencedColumnNames: uuid
             baseTableName: character_inventory

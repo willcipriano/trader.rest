@@ -1,0 +1,11 @@
+@startuml
+class characterStatusDao {
+    UUID uuid
+    Integer currentStrength
+    Integer currentIntelligence
+    Integer currentWisdom
+    Integer currentDexterity
+    Integer currentCharisma
+    Integer currentHitPoints
+}
+@enduml

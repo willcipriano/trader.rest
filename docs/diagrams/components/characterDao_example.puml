@@ -1,0 +1,4 @@
+@startuml
+!include characterSheetDao_example.puml
+!include characterStatusDao_example.puml
+@enduml

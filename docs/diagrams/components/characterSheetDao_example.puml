@@ -1,0 +1,12 @@
+@startuml
+class characterSheetDao {
+    UUID uuid
+    String name
+    Integer maxStrength
+    Integer maxIntelligence
+    Integer maxWisdom
+    Integer maxDexterity
+    Integer maxCharisma
+    Integer level
+}
+@enduml

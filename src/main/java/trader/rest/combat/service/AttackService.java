@@ -184,9 +184,4 @@ public class AttackService {
                 .combatResults(combatResultList)
                 .build();
     }
-
-
-
-
-
 }

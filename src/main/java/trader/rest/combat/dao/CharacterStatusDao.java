@@ -9,28 +9,28 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class characterSheetDao {
+public class CharacterStatusDao {
     @Id
-    UUID uuid;
+    UUID characterSheetUuid;
 
     @Column
-    String name;
+    UUID id;
 
     @Column
-    int maxStrength;
+    int currentStrength;
 
     @Column
-    int maxIntelligence;
+    int currentIntelligence;
 
     @Column
-    int maxWisdom;
+    int currentWisdom;
 
     @Column
-    int maxDexterity;
+    int currentDexterity;
 
     @Column
-    int maxCharisma;
+    int currentCharisma;
 
     @Column
-    int level;
+    int currentHitPoints;
 }
