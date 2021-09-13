@@ -4,11 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import trader.rest.combat.dao.*;
+import trader.rest.combat.entity.CharacterDaoComponentEnum;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -93,6 +97,37 @@ class CharacterDaoRepositoryTest {
 
         assertEquals(characterUuid, characterDao.getUuid());
         assertFalse(characterDao.isFetchSuccess());
+    }
+
+    @Test
+    void testFindFieldsByUuid() {
+        CharacterSheetDaoRepository characterSheetDaoRepository = Mockito.mock(CharacterSheetDaoRepository.class);
+        UUID characterUuid = UUID.randomUUID();
+
+        Mockito.when(characterSheetDaoRepository.findByUuid(characterUuid))
+                .thenReturn(createCharacterSheetDao(characterUuid, "Test Char", 1, 2));
+
+        CharacterStatusDaoRepository characterStatusDaoRepository = Mockito.mock(CharacterStatusDaoRepository.class);
+
+        Mockito.when(characterStatusDaoRepository.findByCharacterSheetUuid(characterUuid)).thenReturn(createCharacterStatusDao(characterUuid, 1, 1));
+
+        CharacterInventoryDaoRepository characterInventoryDaoRepository = Mockito.mock(CharacterInventoryDaoRepository.class);
+
+        Mockito.when(characterInventoryDaoRepository.findByCharacterSheetUuid(characterUuid)).thenReturn(createCharacterInventoryDao(characterUuid));
+
+        CharacterDaoRepository characterDaoRepository = new CharacterDaoRepository(characterStatusDaoRepository, characterSheetDaoRepository, characterInventoryDaoRepository);
+
+        CharacterDao characterDaoStatus = characterDaoRepository.findFieldsByUuid(characterUuid, List.of(CharacterDaoComponentEnum.STATUS));
+        CharacterDao characterDaoInventory = characterDaoRepository.findFieldsByUuid(characterUuid, List.of(CharacterDaoComponentEnum.INVENTORY));
+
+        assertNotNull(characterDaoStatus.getCharacterStatusDao());
+        assertNotNull(characterDaoInventory.getCharacterInventoryDao());
+
+        assertNull(characterDaoStatus.getCharacterInventoryDao());
+        assertNull(characterDaoInventory.getCharacterStatusDao());
+
+        assertTrue(characterDaoInventory.getContainsFields().contains(CharacterDaoComponentEnum.INVENTORY));
+        assertTrue(characterDaoStatus.getContainsFields().contains(CharacterDaoComponentEnum.STATUS));
     }
 
 }
