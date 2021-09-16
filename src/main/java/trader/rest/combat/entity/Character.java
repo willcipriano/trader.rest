@@ -5,11 +5,8 @@ import trader.rest.combat.exception.AbiltyBonusException;
 import trader.rest.combat.exception.CharacterInitException;
 import trader.rest.combat.exception.ValidationException;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Map;
 
 @Data
 @Builder
@@ -18,39 +15,17 @@ public class Character {
     @Size(max = 75, min = 1)
     String name;
 
-    @Min(1)
-    @Max(999)
-    int strength;
-
-    @Min(1)
-    @Max(999)
-    int intelligence;
-
-    @Min(1)
-    @Max(999)
-    int wisdom;
-
-    @Min(1)
-    @Max(999)
-    int dexterity;
-
-    @Min(1)
-    @Max(999)
-    int constitution;
-
-    @Min(1)
-    @Max(999)
-    int charisma;
-
-    @Min(1)
-    @Max(999)
-    int level;
+    @NotNull
+    CharacterSheet sheet;
 
     @NotNull
-    Armor armor;
+    CharacterStatus status;
 
     @NotNull
-    CharacterEffects effects;
+    CharacterInventory inventory;
+
+    @NotNull
+    CharacterConsciousnessStatus characterConsciousnessStatus;
 
     @NotNull
     ArmorStats armorStats;
@@ -62,64 +37,44 @@ public class Character {
     BodyStatistics body;
 
     public static class CharacterBuilder {
-        /*
-         *  this allows for validation in the builder itself, preventing
-         *  out of spec characters from being built.
-        */
-
         @NotNull
         @Size(max = 75, min = 1)
         String name;
 
-        @Min(1)
-        @Max(999)
-        int strength;
+        @NotNull
+        CharacterSheet sheet;
 
-        @Min(1)
-        @Max(999)
-        int intelligence;
+        @NotNull
+        CharacterStatus status;
 
-        @Min(1)
-        @Max(999)
-        int wisdom;
+        @NotNull
+        CharacterInventory inventory;
 
-        @Min(1)
-        @Max(999)
-        int dexterity;
+        @NotNull
+        CharacterConsciousnessStatus characterConsciousnessStatus;
 
-        @Min(1)
-        @Max(999)
-        int constitution;
-
-        @Min(1)
-        @Max(999)
-        int charisma;
-
-        @Min(1)
-        @Max(999)
-        int level;
+        @NotNull
+        ArmorStats armorStats;
 
         @NotNull
         AbilityModifier abilityModifier;
 
-        @NotNull
-        CharacterEffects effects;
-
     public CharacterBuilder calculateDerivedStats() throws CharacterInitException {
         this.abilityModifier = AbilityModifier.builder()
-                .define(this.strength, this.intelligence, this.wisdom, this.dexterity, this.constitution, this.charisma)
+                .define(this.status.currentStrength, this.status.currentIntelligence, this.status.currentWisdom, this.status.currentDexterity, this.status.currentConstitution, this.status.currentCharisma)
                 .build();
 
         this.armorStats = ArmorStats.builder()
-                .define(this.armor.getArmorItemList(), this.abilityModifier.dexterity)
+                .define(this.inventory.armor.getArmorItemList(), this.abilityModifier.dexterity)
                 .build();
 
         this.body = BodyStatistics.builder()
                 .calculateStartingHitPointsFromCharacterBuilder(this)
                 .build();
 
-        if (this.effects == null) {
-        this.effects = CharacterEffects.builder().buildEmpty(); }
+//        if (this.characterConsciousnessStatus.effects == null) {
+//        this.effects = CharacterEffects.builder().buildEmpty(); }
+
         return this;
     }
 
@@ -161,35 +116,37 @@ public class Character {
      */
     public void applyDamage(int hp) {
         this.body.applyDamage(hp);
+        this.status.currentHitPoints = this.body.curHP;
     }
 
     public void applyHealing(int hp) {
         this.body.applyHealing(hp);
+        this.status.currentHitPoints = this.body.curHP;
     }
 
     public Boolean isValidDefender() { return this.body.isValidDefender(); }
 
     public Boolean isValidAttacker() { return this.body.isValidAttacker(); }
 
-    public Map<Effect, EffectStatus> getEffects() {
-        return this.effects.getEffects(); }
-
-    private void expireEffect(Effect effect) {
-        this.effects.getEffects().remove(effect);
-    }
-
-    public void incrementEffect(Effect effect) {
-        this.effects.getEffects().get(effect).increment();
-
-        if (!this.effects.getEffects().get(effect).isValid()) {
-            expireEffect(effect);
-        }
-    }
+//    public Map<Effect, EffectStatus> getEffects() {
+//        return this.effects.getEffects(); }
+//
+//    private void expireEffect(Effect effect) {
+//        this.effects.getEffects().remove(effect);
+//    }
+//
+//    public void incrementEffect(Effect effect) {
+//        this.effects.getEffects().get(effect).increment();
+//
+//        if (!this.effects.getEffects().get(effect).isValid()) {
+//            expireEffect(effect);
+//        }
+//    }
 
     public void rebuildAbilityModifiers() {
         try {
         this.abilityModifier = AbilityModifier.builder()
-                .define(this.strength, this.intelligence, this.wisdom, this.dexterity, this.constitution, this.charisma)
+                .define(this.status.currentStrength, this.status.currentIntelligence, this.status.currentWisdom, this.status.currentDexterity, this.status.currentConstitution, this.status.currentCharisma)
                 .build(); }
         catch (CharacterInitException ignore) {};
 
@@ -198,32 +155,32 @@ public class Character {
     public void applyStatusChange(StatTypeEnum statTypeEnum, int change) {
         switch (statTypeEnum) {
             case STR:
-                this.strength += change;
+                this.status.currentStrength += change;
                 rebuildAbilityModifiers();
                 return;
 
             case INT:
-                this.intelligence += change;
+                this.status.currentIntelligence += change;
                 rebuildAbilityModifiers();
                 return;
 
             case WIZ:
-                this.wisdom += change;
+                this.status.currentWisdom += change;
                 rebuildAbilityModifiers();
                 return;
 
             case CON:
-                this.constitution += change;
+                this.status.currentConstitution += change;
                 rebuildAbilityModifiers();
                 return;
 
             case DEX:
-                this.dexterity += change;
+                this.status.currentDexterity += change;
                 rebuildAbilityModifiers();
                 return;
 
             case CHA:
-                this.charisma += change;
+                this.status.currentCharisma += change;
                 rebuildAbilityModifiers();
                 return;
 

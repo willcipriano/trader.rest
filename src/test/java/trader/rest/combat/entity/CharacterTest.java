@@ -87,16 +87,6 @@ class CharacterTest {
 
     Character createTestCharacter(int level, int statLevel, String name, ArmorTypeEnum armorType) throws CharacterInitException, ValidationException {
         return Character.builder()
-                .level(level)
-                .strength(statLevel)
-                .intelligence(statLevel)
-                .wisdom(statLevel)
-                .dexterity(statLevel)
-                .constitution(statLevel)
-                .charisma(statLevel)
-                .name(name)
-                .armor(createTestArmor(armorType))
-                .calculateDerivedStats()
                 .build();
     }
 
@@ -110,7 +100,6 @@ class CharacterTest {
         for (ArmorTypeEnum armorType : ArmorTypeEnum.values()) {
             for (Integer statLevel : statLevels) {
                 for (Integer level : charLevels) {
-
                     // Character creation time is critical to overall
                     // combat simulation performance.
                     long startTime = System.nanoTime();
@@ -126,18 +115,18 @@ class CharacterTest {
                     Utils.validate(testChar);
 
                     // basic smoke testing
-                    assertEquals(level, testChar.level);
-                    assertEquals(statLevel, testChar.strength);
-                    assertEquals(statLevel, testChar.intelligence);
-                    assertEquals(statLevel, testChar.wisdom);
-                    assertEquals(statLevel, testChar.dexterity);
-                    assertEquals(statLevel, testChar.constitution);
-                    assertEquals(statLevel, testChar.charisma);
+                    assertEquals(level, testChar.sheet.level);
+                    assertEquals(statLevel, testChar.status.currentStrength);
+                    assertEquals(statLevel, testChar.status.currentIntelligence);
+                    assertEquals(statLevel, testChar.status.currentWisdom);
+                    assertEquals(statLevel, testChar.status.currentDexterity);
+                    assertEquals(statLevel, testChar.status.currentConstitution);
+                    assertEquals(statLevel, testChar.status.currentCharisma);
                     assertEquals(name, testChar.name);
-                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.BODY).type);
-                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.HEAD).type);
-                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.HANDS).type);
-                    assertEquals(armorType, testChar.armor.items.get(ArmorSlotEnum.FEET).type);
+                    assertEquals(armorType, testChar.inventory.armor.items.get(ArmorSlotEnum.BODY).type);
+                    assertEquals(armorType, testChar.inventory.armor.items.get(ArmorSlotEnum.HEAD).type);
+                    assertEquals(armorType, testChar.inventory.armor.items.get(ArmorSlotEnum.HANDS).type);
+                    assertEquals(armorType, testChar.inventory.armor.items.get(ArmorSlotEnum.FEET).type);
 
                     // Armor Class calculation testing
                     if (armorType == ArmorTypeEnum.LIGHT) {

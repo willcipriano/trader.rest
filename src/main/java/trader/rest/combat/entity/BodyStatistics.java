@@ -11,17 +11,17 @@ public class BodyStatistics {
     Integer maxHP;
     Integer curMaxHp;
     Integer curHP;
-    CharacterStatus status;
+    CharacterConsciousnessStatus status;
     Boolean validAttacker;
     Boolean validDefender;
 
     public void statusCheck() {
         if (this.curHP > 0) {
-            this.status = CharacterStatus.ALIVE_WELL;
+            this.status = CharacterConsciousnessStatus.ALIVE_WELL;
             this.validAttacker = true;
             this.validDefender = true;
         } else {
-            this.status = CharacterStatus.UNCONSCIOUS;
+            this.status = CharacterConsciousnessStatus.UNCONSCIOUS;
             this.validAttacker = false;
             this.validDefender = true;
             this.curHP = 0;
@@ -99,7 +99,7 @@ public class BodyStatistics {
         Integer curHP;
 
         @NotNull
-        CharacterStatus status;
+        CharacterConsciousnessStatus status;
 
         @NotNull
         Boolean validAttacker;
@@ -110,13 +110,13 @@ public class BodyStatistics {
         private void makeAlive() {
             this.validAttacker = true;
             this.validDefender = true;
-            this.status = CharacterStatus.ALIVE_WELL;
+            this.status = CharacterConsciousnessStatus.ALIVE_WELL;
         }
 
         private void makeUnconscious() {
             this.validAttacker = false;
             this.validDefender = true;
-            this.status = CharacterStatus.UNCONSCIOUS;
+            this.status = CharacterConsciousnessStatus.UNCONSCIOUS;
         }
 
         public BodyStatisticsBuilder hitPoints(int maxHP) {
@@ -134,13 +134,13 @@ public class BodyStatistics {
         }
 
         public BodyStatisticsBuilder calculateStartingHitPointsFromCharacterBuilder(Character.CharacterBuilder character) {
-            int hp = character.level + 1;
+            int hp = character.sheet.level + 1;
             double conBonus = character.abilityModifier.constitution;
 
             if (conBonus > 1) {
-                hp += hp + (conBonus * 2) + character.constitution;
+                hp += hp + (conBonus * 2) + character.sheet.maxConstitution;
             } else {
-                hp += hp + character.constitution;
+                hp += hp + character.sheet.maxConstitution;
             }
 
 

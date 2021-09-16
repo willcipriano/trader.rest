@@ -56,18 +56,6 @@ public class EffectServiceTest {
         armor.setFeet(createTestArmor(ArmorTypeEnum.LIGHT, ArmorSlotEnum.HANDS, 1));
 
         return Character.builder()
-                .level(level)
-                .strength(statLevel)
-                .intelligence(statLevel)
-                .wisdom(statLevel)
-                .dexterity(statLevel)
-                .constitution(statLevel)
-                .charisma(statLevel)
-                .name(name)
-                .armor(armor)
-                .effects(effects)
-                .calculateDerivedStats()
-                .validate()
                 .build();
     }
 

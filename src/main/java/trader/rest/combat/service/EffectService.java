@@ -37,20 +37,20 @@ public class EffectService {
     public List<EffectResult> calculateAndApplyOnAttackEffects(Character belligerent, Character defender) {
         List<EffectResult> effectResults = new ArrayList<>();
 
-        for (Effect effect: belligerent.getEffects().keySet()) {
-            EffectResult newReport = EffectResult.builder()
-                    .atkDmgModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.DMG, 0))
-                    .atkHitModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.HIT, 0))
-                    .defDmgModifier(effect.getTargetStatModifier().getOrDefault(StatTypeEnum.DMG, 0))
-                    .defHitModifier(effect.getTargetStatModifier().getOrDefault(StatTypeEnum.HIT, 0))
-                    .effectTurnsRemaining(belligerent.getEffects().get(effect).getTurnsRemaining())
-                    .effectName(effect.getName())
-                    .build();
-
-            applyCoreCharacterEffects(belligerent, defender, effect, newReport);
-            effectResults.add(newReport);
-            belligerent.incrementEffect(effect);
-        }
+//        for (Effect effect: belligerent.getEffects().keySet()) {
+//            EffectResult newReport = EffectResult.builder()
+//                    .atkDmgModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.DMG, 0))
+//                    .atkHitModifier(effect.getSelfStatModifier().getOrDefault(StatTypeEnum.HIT, 0))
+//                    .defDmgModifier(effect.getTargetStatModifier().getOrDefault(StatTypeEnum.DMG, 0))
+//                    .defHitModifier(effect.getTargetStatModifier().getOrDefault(StatTypeEnum.HIT, 0))
+//                    .effectTurnsRemaining(belligerent.getEffects().get(effect).getTurnsRemaining())
+//                    .effectName(effect.getName())
+//                    .build();
+//
+//            applyCoreCharacterEffects(belligerent, defender, effect, newReport);
+//            effectResults.add(newReport);
+//            belligerent.incrementEffect(effect);
+//        }
 
         return effectResults;
     }

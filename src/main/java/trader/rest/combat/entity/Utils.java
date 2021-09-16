@@ -24,9 +24,9 @@ public class Utils {
 
         if (obj instanceof Character) {
             validate(((Character) obj).abilityModifier);
-            validate(((Character) obj).armor);
+            validate(((Character) obj).inventory.armor);
             validate(((Character) obj).armorStats);
-            validate(((Character) obj).effects);
+//            validate(((Character) obj).effects);
             validate(((Character) obj).body);}
 
         if (obj instanceof AttackRequest) {

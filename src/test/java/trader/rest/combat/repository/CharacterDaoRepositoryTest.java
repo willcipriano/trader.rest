@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import trader.rest.combat.dao.*;
 import trader.rest.combat.entity.CharacterDaoComponentEnum;
+import trader.rest.combat.exception.CharacterDaoComponentFetchException;
 
 import java.util.Collections;
 import java.util.List;
@@ -100,7 +101,7 @@ class CharacterDaoRepositoryTest {
     }
 
     @Test
-    void testFindFieldsByUuid() {
+    void testFindFieldsByUuid() throws CharacterDaoComponentFetchException {
         CharacterSheetDaoRepository characterSheetDaoRepository = Mockito.mock(CharacterSheetDaoRepository.class);
         UUID characterUuid = UUID.randomUUID();
 

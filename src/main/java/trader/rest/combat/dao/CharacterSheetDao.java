@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class CharacterSheetDao {
+public class CharacterSheetDao implements CharacterComponent {
     @Id
     UUID uuid;
 
@@ -30,6 +30,9 @@ public class CharacterSheetDao {
 
     @Column
     int maxCharisma;
+
+    @Column
+    int maxConstitution;
 
     @Column
     int level;

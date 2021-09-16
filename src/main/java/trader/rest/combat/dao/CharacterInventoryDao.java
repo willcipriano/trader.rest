@@ -1,7 +1,9 @@
 package trader.rest.combat.dao;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +12,8 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class CharacterInventoryDao {
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+public class CharacterInventoryDao implements CharacterComponent{
     @Column
     UUID uuid;
 

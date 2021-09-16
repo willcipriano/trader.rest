@@ -1,101 +1,79 @@
 package trader.rest.combat.entity;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import lombok.Builder;
+import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.UUID;
 
-@Entity
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@Data
+@Builder
 public class CharacterSheet {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    UUID uuid;
-
     @NotNull
     @Size(max = 75, min = 1)
-    @Column
     String name;
 
     @Min(1)
     @Max(999)
-    @Column
     int maxStrength;
 
     @Min(1)
     @Max(999)
-    @Column
-    int strength;
-
-    @Min(1)
-    @Max(999)
-    @Column
     int maxIntelligence;
 
     @Min(1)
     @Max(999)
-    @Column
-    int intelligence;
-
-    @Min(1)
-    @Max(999)
-    @Column
-    int wisdom;
-
-    @Min(1)
-    @Max(999)
-    @Column
     int maxWisdom;
 
     @Min(1)
     @Max(999)
-    @Column
-    int dexterity;
-
-    @Min(1)
-    @Max(999)
-    @Column
     int maxDexterity;
 
     @Min(1)
     @Max(999)
-    @Column
-    int constitution;
-
-    @Min(1)
-    @Max(999)
-    @Column
     int maxConstitution;
 
     @Min(1)
     @Max(999)
-    @Column
-    int charisma;
-
-    @Min(1)
-    @Max(999)
-    @Column
     int maxCharisma;
 
     @Min(1)
     @Max(999)
-    @Column
     int level;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    Armor armor;
+    public CharacterSheet() {}
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    CharacterEffects effects;
+    public CharacterSheet(String name, int maxStrength, int maxIntelligence, int maxWisdom, int maxDexterity, int maxConstitution, int maxCharisma, int level) {
+        this.name = name;
+        this.maxStrength = maxStrength;
+        this.maxIntelligence = maxIntelligence;
+        this.maxWisdom = maxWisdom;
+        this.maxDexterity = maxDexterity;
+        this.maxCharisma = maxCharisma;
+        this.level = level;
+    }
+
+    public static class CharacterSheetBuilder {
+        UUID uuid;
+
+        String name;
+
+        int maxStrength;
+
+        int maxIntelligence;
+
+        int maxWisdom;
+
+        int maxDexterity;
+
+        int maxConstitution;
+
+        int maxCharisma;
+
+        int level;
+
+    }
 }

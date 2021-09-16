@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class CharacterStatusDao {
+public class CharacterStatusDao implements CharacterComponent {
     @Id
     UUID characterSheetUuid;
 
