@@ -86,7 +86,32 @@ class CharacterTest {
     }
 
     Character createTestCharacter(int level, int statLevel, String name, ArmorTypeEnum armorType) throws CharacterInitException, ValidationException {
+        CharacterSheet characterSheet = new CharacterSheet();
+        characterSheet.level = level;
+        characterSheet.maxCharisma = statLevel;
+        characterSheet.maxConstitution = statLevel;
+        characterSheet.maxDexterity = statLevel;
+        characterSheet.maxIntelligence = statLevel;
+        characterSheet.maxStrength = statLevel;
+        characterSheet.maxWisdom = statLevel;
+        characterSheet.name = name;
+
+        Armor armor = createTestArmor(armorType);
+
+        CharacterInventory characterInventory = new CharacterInventory();
+        characterInventory.armor = armor;
+
+        CharacterStatus characterStatus = new CharacterStatus(statLevel, statLevel, statLevel, statLevel, statLevel, statLevel, statLevel);
+
+
+
+
         return Character.builder()
+                .name(name)
+                .sheet(characterSheet)
+                .inventory(characterInventory)
+                .status(characterStatus)
+                .calculateDerivedStats()
                 .build();
     }
 

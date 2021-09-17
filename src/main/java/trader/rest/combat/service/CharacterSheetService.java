@@ -23,6 +23,4 @@ public class CharacterSheetService {
 
         return characterSheetBuilder.build();
     }
-
-
 }

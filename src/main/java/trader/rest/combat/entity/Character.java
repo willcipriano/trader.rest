@@ -25,9 +25,6 @@ public class Character {
     CharacterInventory inventory;
 
     @NotNull
-    CharacterConsciousnessStatus characterConsciousnessStatus;
-
-    @NotNull
     ArmorStats armorStats;
 
     @NotNull
@@ -49,9 +46,6 @@ public class Character {
 
         @NotNull
         CharacterInventory inventory;
-
-        @NotNull
-        CharacterConsciousnessStatus characterConsciousnessStatus;
 
         @NotNull
         ArmorStats armorStats;
